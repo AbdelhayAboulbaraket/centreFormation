@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projetDeSemestre.centreDeFormation.entities.Categorie;
+import com.projetDeSemestre.centreDeFormation.entities.Formation;
 import com.projetDeSemestre.centreDeFormation.services.CategorieService;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -37,6 +38,14 @@ CategorieService service;
 			public List<Categorie> getCategories(@RequestParam(name="id", required=false) Long id)
 			{
 				return service.getCategories(id);
+			}
+			
+			@GetMapping("/categories/{id}/formations")
+			@ResponseStatus(HttpStatus.OK)
+			public List<Formation> getFormations(@PathVariable Long id)
+			{
+				List<Formation> forms=service.getCategories(id).get(0).getFormations();
+				return forms;
 			}
 			
 			

@@ -1,14 +1,17 @@
 package com.projetDeSemestre.centreDeFormation.entities;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -41,13 +44,23 @@ public @Data class Formation {
 		@OneToMany(mappedBy="formation")
 		List<Seance> seances;
 		
+		@Column(name="DATE_DEBUT_FORMATION")
+		LocalDateTime dateDebut;
+		
+		@Column(name="DATE_FIN_FORMATION")
+		LocalDateTime dateFin;
+		
 //		@Column(name="COUPONS_FORMATION")
 //		@OneToMany(mappedBy="formation",cascade=CascadeType.ALL)
 //		List<Coupon> coupons;
 		
+		
+		 @ManyToMany(fetch = FetchType.LAZY,
+		            cascade = {
+		                CascadeType.MERGE
+		            },
+		            mappedBy = "formations")
 		@JsonIgnore
-		@Column(name="ETUDIANTS_FORMATION")
-		@OneToMany(mappedBy = "formations")
 		List<Etudiant> etudiants;
 		
 		@ManyToOne

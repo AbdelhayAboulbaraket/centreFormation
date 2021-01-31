@@ -52,8 +52,9 @@ public class SeanceService {
 	{	
 		String username=SecurityContextHolder.getContext().getAuthentication().getName();
 		//Admin admin = adminService.getByUsername(username);
-		System.out.println(seance);
+//		System.out.println(seance);
 		Formation formation=formationService.getFormations(seance.getFormation().getId()).get(0);
+		
 		Intervenant intervenant=intervenantService.getIntervenants(formation.getIntervenant().getId()).get(0);
 		for(Formation form: intervenant.getFormations())
 		{

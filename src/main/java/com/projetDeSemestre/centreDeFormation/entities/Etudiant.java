@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -31,13 +33,14 @@ import lombok.Data;
 })
 public @Data class Etudiant extends User {
 	
-	@JsonIgnore
-	@Column(name="FORMATIONS_ETUDIANT")
-	@ManyToMany
-	@JoinTable(
-			  name = "INSCRIT_FORMATION", 
-			  joinColumns = @JoinColumn(name = "id_etudiant"), 
-			  inverseJoinColumns = @JoinColumn(name = "id_"))
+	
+	@ManyToMany(fetch = FetchType.LAZY,
+    cascade = {
+        CascadeType.MERGE
+    })
+	@JoinTable(name = "INSCRIPTION_FORMATION",
+    joinColumns = { @JoinColumn(name = "etudiant_id") },
+    inverseJoinColumns = { @JoinColumn(name = "formation_id") })
     List<Formation> formations;
 	
 	@Column(nullable = true, length = 255)

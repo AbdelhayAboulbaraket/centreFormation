@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
+import com.projetDeSemestre.centreDeFormation.entities.Formation;
 import com.projetDeSemestre.centreDeFormation.exceptions.AlreadyExistsException;
 import com.projetDeSemestre.centreDeFormation.exceptions.NotFoundException;
 import com.projetDeSemestre.centreDeFormation.repositories.EtudiantRepository;
@@ -18,6 +20,8 @@ public class EtudiantService {
 	@Autowired
 	EtudiantRepository rep;
 	
+	@Autowired
+	FormationService formationService;
 	
 	
 
@@ -72,6 +76,16 @@ public class EtudiantService {
 		
 	}
 	
+	public void addFormation(Formation formation)
+	{
+		String username=SecurityContextHolder.getContext().getAuthentication().getName();
+		Etudiant etud = rep.findByUsername(username).orElseThrow(() -> new NotFoundException("Aucun étudiant avec ce username n'est trouvé"));
+		Formation maFormation=formationService.getFormations(formation.getId()).get(0);
+		etud.getFormations().add(maFormation);
+		rep.save(etud);
+		
+	}
+	
 	public void updateEtudiant(Long id,Etudiant etudiant)
 	{
 		Etudiant updated = rep.findById(id).orElseThrow(() -> new NotFoundException("Aucun étudiant avec l'id "+id+" trouvé"));
@@ -79,10 +93,11 @@ public class EtudiantService {
 		//verifier l'unicité du nouveau username
 		if(rep.findByUsername(etudiant.getUsername()).isPresent() && !(rep.findByUsername(etudiant.getUsername()).get()==updated))
 			throw new AlreadyExistsException("Veuillez choisir un autre Username");
-		//verifier l'unicité du nouveau CIN
-		if(rep.findByCin(etudiant.getCin()).isPresent() && !(rep.findByCin(etudiant.getCin()).get()==updated))
-			throw new AlreadyExistsException("Un étudiant avec le CIN "+etudiant.getCin()+" existe déjà");
 		
+		//verifier l'unicité du nouveau CIN
+//		if(rep.findByCin(etudiant.getCin()).isPresent() && !(rep.findByCin(etudiant.getCin()).get()==updated))
+//			throw new AlreadyExistsException("Un étudiant avec le CIN "+etudiant.getCin()+" existe déjà");
+
 		if(etudiant.getNom()!=null && !etudiant.getNom().isEmpty()) updated.setNom(etudiant.getNom());
 		if(etudiant.getPrenom()!=null && !etudiant.getPrenom().isEmpty()) updated.setPrenom(etudiant.getPrenom());
 		if(etudiant.getCin()!=null && !etudiant.getCin().isEmpty()) updated.setCin(etudiant.getCin());

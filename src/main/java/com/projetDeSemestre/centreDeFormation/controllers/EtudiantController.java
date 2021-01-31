@@ -1,12 +1,11 @@
 package com.projetDeSemestre.centreDeFormation.controllers;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,8 +20,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.Gson;
+import com.projetDeSemestre.centreDeFormation.entities.Admin;
 import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
+import com.projetDeSemestre.centreDeFormation.entities.Formation;
 import com.projetDeSemestre.centreDeFormation.services.EtudiantService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @RestController
@@ -45,6 +45,16 @@ EtudiantService service;
 				return service.getEtudiants(id);
 			}
 			
+			@GetMapping("/etudiant/{id}/formations")
+			@ResponseStatus(HttpStatus.OK)
+			public List<Formation> getFormations(@PathVariable Long id)
+			{
+				List<Formation> forms=service.getEtudiants(id).get(0).getFormations();
+				return forms;
+			}
+			
+			
+			
 			
 			@GetMapping("/etudiant/username/{username}")
 			@ResponseStatus(HttpStatus.OK)
@@ -60,7 +70,6 @@ EtudiantService service;
 			
 			@PostMapping("/etudiants")
 			@ResponseStatus(HttpStatus.CREATED)
-			//requestParams@RequestBody Etudiant etudiant,@RequestBody MultipartFile multipartFile
 			public void addEtudiant(@RequestBody Etudiant etudiant) throws IOException
 			{	
 					
@@ -68,6 +77,15 @@ EtudiantService service;
 				service.addEtudiant(etudiant);
 
 			}
+			@PostMapping("/etudiant/inscriptionFormation")
+			@ResponseStatus(HttpStatus.CREATED)
+			public void addFormation(@RequestBody Formation formation) throws IOException
+			{	
+				
+				service.addFormation(formation);
+
+			}
+			
 			
 			@PostMapping("/etudiantPicture/{id}")
 			@ResponseStatus(HttpStatus.CREATED)
