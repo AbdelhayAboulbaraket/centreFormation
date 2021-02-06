@@ -1,8 +1,6 @@
 package com.projetDeSemestre.centreDeFormation.controllers;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.Gson;
-import com.projetDeSemestre.centreDeFormation.entities.Admin;
+import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
 import com.projetDeSemestre.centreDeFormation.entities.Formation;
 import com.projetDeSemestre.centreDeFormation.services.FormationService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
@@ -44,6 +41,13 @@ FormationService service;
 			public List<Formation> getFormations(@RequestParam(name="id", required=false) Long id)
 			{
 				return service.getFormations(id);
+			}
+			
+			@GetMapping("/formation/{id}/etudiants")
+			@ResponseStatus(HttpStatus.OK)
+			public List<Etudiant> getEtudiants(@PathVariable Long id)
+			{
+				return service.getFormations(id).get(0).getEtudiants();
 			}
 			
 			
