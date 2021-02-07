@@ -1,6 +1,7 @@
 package com.projetDeSemestre.centreDeFormation.controllers;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.projetDeSemestre.centreDeFormation.entities.Commentaire;
 import com.projetDeSemestre.centreDeFormation.entities.Seance;
 import com.projetDeSemestre.centreDeFormation.entities.Support;
 import com.projetDeSemestre.centreDeFormation.repositories.SupportRepository;
+import com.projetDeSemestre.centreDeFormation.services.CommentaireService;
 import com.projetDeSemestre.centreDeFormation.services.SeanceService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 
@@ -30,9 +33,13 @@ import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api")
 public class SeanceController {
+	
 	SeanceService service;
 	@Autowired
 	SupportRepository repo;
+	
+	@Autowired
+	CommentaireService commentaireService;
 	
 	@Autowired
 	public SeanceController(SeanceService service) {
@@ -79,6 +86,17 @@ public class SeanceController {
 				
 				FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);	
 			}
+			
+			@PostMapping("/seance/{id}/commentaire")
+			@ResponseStatus(HttpStatus.CREATED)
+			public void addCommentaire(@PathVariable Long id,@RequestBody Commentaire commentaire ) throws IOException
+			{	
+				Seance seance=this.service.getSeances(id).get(0);
+				commentaire.setSeance(seance);
+				LocalDateTime currentUtilDate = LocalDateTime.now(); 
+				commentaire.setDate(currentUtilDate);
+				this.commentaireService.addCategorie(commentaire);
+			}
 		
 		
 		
@@ -90,6 +108,8 @@ public class SeanceController {
 			{	
 				service.updateSeance(id,seance);
 			}
+			
+			
 	
 		
 			

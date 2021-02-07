@@ -1,8 +1,5 @@
 package com.projetDeSemestre.centreDeFormation.entities;
 
-
-
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,34 +16,29 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
+
 @Entity
-@Table(name="SEANCE")
-public @Data class Seance {
+@Data
+@Table(name="COMMENTAIRE")
+public class Commentaire {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Long id;
 	
-	@Column(name="DATE_DEBUT_SEANCE")
-	LocalDateTime dateDebut;
-	
-	@Column(name="DATE_FIN_SEANCE")
-	LocalDateTime dateFin;
-	
-	@Column(name="DESCRIPTION_SEANCE")
-	String description;
-	
 	@ManyToOne
-	@JoinColumn(name="FORMATION_SEANCE")
-	Formation formation;
+	@JoinColumn(name="PROPRIETAIRE_COMMENTAIRE")
+	User proprietaire;
 	
 	
-	@OneToMany(mappedBy="seance")
-	@Column(name="SUPPORTS_SEANCE")
-	List<Support> supports; 
+	@Column(name="CONTENU_COMMENTAIRE")
+	String contenu;
 	
-	@OneToMany(mappedBy="seance")
-	@Column(name="COMMENTAIRES_SEANCE")
-	List<Commentaire> commentaires; 
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name="SEANCE_COMMENTAIRE")
+	Seance seance;
 	
-	
+	@Column(name="DATE_COMMENTAIRE")
+	LocalDateTime date;
 }
