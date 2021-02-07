@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
 import com.projetDeSemestre.centreDeFormation.entities.Formation;
+import com.projetDeSemestre.centreDeFormation.services.EtudiantService;
 import com.projetDeSemestre.centreDeFormation.services.FormationService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @RestController
@@ -28,6 +29,8 @@ import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @RequestMapping(value = "/api")
 public class FormationController {
 FormationService service;
+@Autowired
+EtudiantService etudService;
 	
 	@Autowired
 	public FormationController(FormationService service) {
@@ -48,6 +51,19 @@ FormationService service;
 			public List<Etudiant> getEtudiants(@PathVariable Long id)
 			{
 				return service.getFormations(id).get(0).getEtudiants();
+			}
+			
+			@GetMapping("/formation/{id}/etudiantsNonInscrits")
+			@ResponseStatus(HttpStatus.OK)
+			public List<Etudiant> getEtudiantsNonInscrits(@PathVariable Long id)
+			{
+				Formation maFormation=this.service.getFormations(id).get(0);
+				List <Etudiant> tousLesEtudiants=this.etudService.getEtudiants(null);
+				List <Etudiant> etudiantInscrits=maFormation.getEtudiants();
+				tousLesEtudiants.removeAll(etudiantInscrits);
+				List <Etudiant> etudiantsNonInscrits=tousLesEtudiants;
+				return tousLesEtudiants;
+
 			}
 			
 			

@@ -41,6 +41,7 @@ public @Data class Etudiant extends User {
 	@JoinTable(name = "INSCRIPTION_FORMATION",
     joinColumns = { @JoinColumn(name = "etudiant_id") },
     inverseJoinColumns = { @JoinColumn(name = "formation_id") })
+	@JsonIgnore
     List<Formation> formations;
 	
 	@Column(nullable = true, length = 255)

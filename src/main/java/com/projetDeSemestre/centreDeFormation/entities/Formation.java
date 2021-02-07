@@ -60,7 +60,6 @@ public @Data class Formation {
 		                CascadeType.MERGE
 		            },
 		            mappedBy = "formations")
-		@JsonIgnore
 		List<Etudiant> etudiants;
 		
 		@ManyToOne
