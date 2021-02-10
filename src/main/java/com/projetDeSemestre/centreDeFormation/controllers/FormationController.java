@@ -19,24 +19,44 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.projetDeSemestre.centreDeFormation.entities.Choix;
 import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
+import com.projetDeSemestre.centreDeFormation.entities.Evaluation;
 import com.projetDeSemestre.centreDeFormation.entities.Formation;
+import com.projetDeSemestre.centreDeFormation.entities.Question;
+import com.projetDeSemestre.centreDeFormation.repositories.ChoixRepository;
+import com.projetDeSemestre.centreDeFormation.repositories.EvaluationRepository;
+import com.projetDeSemestre.centreDeFormation.repositories.FormationRepository;
+import com.projetDeSemestre.centreDeFormation.repositories.QuestionRepository;
 import com.projetDeSemestre.centreDeFormation.services.EtudiantService;
+import com.projetDeSemestre.centreDeFormation.services.EvaluationService;
 import com.projetDeSemestre.centreDeFormation.services.FormationService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api")
 public class FormationController {
+	
+@Autowired
+QuestionRepository questionRepository;
+
+@Autowired
+EvaluationRepository evaluationRepository;
+
+@Autowired
+ChoixRepository choixRepository;
+
+@Autowired
+FormationRepository rep;
+	
+@Autowired
 FormationService service;
+
 @Autowired
 EtudiantService etudService;
-	
-	@Autowired
-	public FormationController(FormationService service) {
-		
-		this.service=service;
-	}
+
+@Autowired
+EvaluationService evalService;
 	
 	//GET
 			@GetMapping("/formations")
@@ -62,7 +82,7 @@ EtudiantService etudService;
 				List <Etudiant> etudiantInscrits=maFormation.getEtudiants();
 				tousLesEtudiants.removeAll(etudiantInscrits);
 				List <Etudiant> etudiantsNonInscrits=tousLesEtudiants;
-				return tousLesEtudiants;
+				return etudiantsNonInscrits;
 
 			}
 			
@@ -93,6 +113,28 @@ EtudiantService etudService;
 				p.setThumbnail(uploadDir+nomPhoto);
 				service.updateFormation(id, p);	
 		        FileUploadUtil.saveFile(uploadDir, nomPhoto, multipartFile);
+			}
+			
+			@PostMapping("/formation/{id}/evaluation")
+			@ResponseStatus(HttpStatus.CREATED)
+			public void addEvaluation(@PathVariable Long id,@RequestBody Evaluation evaluation) throws IOException
+			{	
+				Formation formation=this.service.getFormations(id).get(0);
+				evaluation.setFormation(formation);
+				this.evalService.addEvaluation(evaluation);
+				for(Question question:evaluation.getQuestions())
+				{	
+					question.setEvaluation(evaluation);
+					this.questionRepository.save(question);
+					for(Choix choix:question.getChoix())
+					{   
+						choix.setQuestion(question);
+						this.choixRepository.save(choix);
+					}
+				}	
+				formation.setEvaluation(evaluation);
+				this.rep.save(formation);
+				
 			}
 		
 		
