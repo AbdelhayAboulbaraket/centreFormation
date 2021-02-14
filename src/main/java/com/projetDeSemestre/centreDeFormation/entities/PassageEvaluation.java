@@ -1,15 +1,12 @@
 package com.projetDeSemestre.centreDeFormation.entities;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -20,26 +17,23 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="EVALUATION")
-public class Evaluation {
-	
+@Table(name="PASSAGE_EVALUATION")
+
+public class PassageEvaluation {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Long id;
 	
+	
+	@OneToOne
+	Etudiant etudiant;
+	
 	@JsonIgnore
 	@OneToOne
-	@JoinColumn(name="FORMATION_EVALUATION")
-	Formation formation;
+	Evaluation evaluation;
 	
-	@OneToMany(mappedBy="evaluation",cascade=CascadeType.ALL)
-	@Column(name="QUESTIONS_EVALUATION")
-	List<Question> questions;
+	@OneToMany(mappedBy="passageEvaluation",cascade=CascadeType.ALL)
+	List<Reponse> reponses;
 	
-	@Column(name="DATE_EVALUATION")
-	LocalDateTime date;
-	
-	@OneToMany(mappedBy="evaluation")
-	List<PassageEvaluation> passages;
-
+	double pourcentage;
 }

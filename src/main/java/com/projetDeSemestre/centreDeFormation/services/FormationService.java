@@ -42,8 +42,8 @@ public class FormationService {
 		String username=SecurityContextHolder.getContext().getAuthentication().getName();
 		Admin admin = adminService.getByUsername(username);
 		formation.setCreationAdmin(admin);
-		rep.save(formation);
-		return formation;
+		
+		return rep.save(formation);
 	}
 	
 	

@@ -82,8 +82,7 @@ public class EtudiantService {
 		Etudiant etud = rep.findByUsername(username).orElseThrow(() -> new NotFoundException("Aucun étudiant avec ce username n'est trouvé"));
 		Formation maFormation=formationService.getFormations(formation.getId()).get(0);
 		etud.getFormations().add(maFormation);
-		rep.save(etud);
-		
+		rep.save(etud);	
 	}
 	
 	public void updateEtudiant(Long id,Etudiant etudiant)

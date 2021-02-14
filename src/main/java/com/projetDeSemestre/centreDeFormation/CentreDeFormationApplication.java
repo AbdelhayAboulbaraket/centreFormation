@@ -27,8 +27,8 @@ public class CentreDeFormationApplication {
 	currentAdminList = service.getAdmins(null);	
 	} catch (NotFoundException e) {
 		Admin firstAdmin=new Admin();
-		firstAdmin.setUsername("boogey");
-		firstAdmin.setPassword("samirlay.123");
+		firstAdmin.setUsername("admin");
+		firstAdmin.setPassword("admin");
 		firstAdmin.setRole("Admin");
         service.addAdmin(firstAdmin);	
 	}

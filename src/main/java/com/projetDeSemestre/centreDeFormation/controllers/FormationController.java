@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,11 +24,18 @@ import com.projetDeSemestre.centreDeFormation.entities.Choix;
 import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
 import com.projetDeSemestre.centreDeFormation.entities.Evaluation;
 import com.projetDeSemestre.centreDeFormation.entities.Formation;
+import com.projetDeSemestre.centreDeFormation.entities.PassageEvaluation;
 import com.projetDeSemestre.centreDeFormation.entities.Question;
+import com.projetDeSemestre.centreDeFormation.entities.Reponse;
+import com.projetDeSemestre.centreDeFormation.entities.Seance;
 import com.projetDeSemestre.centreDeFormation.repositories.ChoixRepository;
+import com.projetDeSemestre.centreDeFormation.repositories.EtudiantRepository;
 import com.projetDeSemestre.centreDeFormation.repositories.EvaluationRepository;
 import com.projetDeSemestre.centreDeFormation.repositories.FormationRepository;
+import com.projetDeSemestre.centreDeFormation.repositories.PassageEvaluationRepository;
 import com.projetDeSemestre.centreDeFormation.repositories.QuestionRepository;
+import com.projetDeSemestre.centreDeFormation.repositories.ReponseRepository;
+import com.projetDeSemestre.centreDeFormation.services.EmailService;
 import com.projetDeSemestre.centreDeFormation.services.EtudiantService;
 import com.projetDeSemestre.centreDeFormation.services.EvaluationService;
 import com.projetDeSemestre.centreDeFormation.services.FormationService;
@@ -36,7 +44,10 @@ import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api")
 public class FormationController {
-	
+
+@Autowired
+EtudiantRepository etudiantRepository;
+
 @Autowired
 QuestionRepository questionRepository;
 
@@ -57,6 +68,15 @@ EtudiantService etudService;
 
 @Autowired
 EvaluationService evalService;
+
+@Autowired
+EmailService emailService;
+
+@Autowired
+PassageEvaluationRepository passageEvalRepo;
+
+@Autowired
+ReponseRepository reponseRepository;
 	
 	//GET
 			@GetMapping("/formations")
@@ -73,6 +93,13 @@ EvaluationService evalService;
 				return service.getFormations(id).get(0).getEtudiants();
 			}
 			
+			@GetMapping("/formation/{id}/seances")
+			@ResponseStatus(HttpStatus.OK)
+			public List<Seance> getSeances(@PathVariable Long id)
+			{
+				return service.getFormations(id).get(0).getSeances();
+			}
+			
 			@GetMapping("/formation/{id}/etudiantsNonInscrits")
 			@ResponseStatus(HttpStatus.OK)
 			public List<Etudiant> getEtudiantsNonInscrits(@PathVariable Long id)
@@ -83,7 +110,6 @@ EvaluationService evalService;
 				tousLesEtudiants.removeAll(etudiantInscrits);
 				List <Etudiant> etudiantsNonInscrits=tousLesEtudiants;
 				return etudiantsNonInscrits;
-
 			}
 			
 			
@@ -100,6 +126,19 @@ EvaluationService evalService;
 				System.out.println(formation.getIntervenant().getId());
 				Formation maFormation=service.addFormation(formation);
 				return maFormation;
+			}
+			
+			//POST
+			@PostMapping("/formation/{id}/inscrireEtudiant")
+			@ResponseStatus(HttpStatus.CREATED)
+			public void addEtudiant(@PathVariable Long id,@RequestBody Etudiant etudiant) throws IOException
+			{	
+				Formation maFormation=this.service.getFormations(id).get(0);
+				Etudiant etud=this.etudService.getByUsername(etudiant.getUsername());
+				etud.getFormations().add(maFormation);
+				this.emailService.sendInscriptionInformations(etud, maFormation);
+				
+				this.etudiantRepository.save(etud);
 			}
 			
 			@PostMapping("/formationThumbnail/{id}")
@@ -133,9 +172,40 @@ EvaluationService evalService;
 					}
 				}	
 				formation.setEvaluation(evaluation);
-				this.rep.save(formation);
+				this.rep.save(formation);	
+			}
+			@PostMapping("/formation/{id}/passageEvaluation")
+			@ResponseStatus(HttpStatus.CREATED)
+			public void addPassageEvaluation(@PathVariable Long id,@RequestBody PassageEvaluation passageEvaluation) throws IOException
+			{	
+				double pourcentage=0;
+				Formation formation=this.service.getFormations(id).get(0);
+				Evaluation eval=formation.getEvaluation();
+				String username=SecurityContextHolder.getContext().getAuthentication().getName();
+				Etudiant etudiant=this.etudService.getByUsername(username);
+				// remplir le passage eval
+				passageEvaluation.setEtudiant(etudiant);
+				passageEvaluation.setEvaluation(eval);
+				PassageEvaluation passage2=this.passageEvalRepo.save(passageEvaluation);
+				for(Reponse resp:passageEvaluation.getReponses())
+				{	
+					resp.setPassageEvaluation(passageEvaluation);
+					this.reponseRepository.save(resp);
+					
+					for(Question question:eval.getQuestions()) {
+					if(question.getNumeroDeQuestion().equals(resp.getNumeroDeQuestion()))
+					{	
+						if(resp.getValeur().equals(question.getBonneReponse())) pourcentage+=(double)1/(eval.getQuestions().size());
+						break;
+					}
+					}
+				}
+				passage2.setPourcentage(pourcentage);
+				this.passageEvalRepo.save(passage2);
 				
 			}
+			
+			
 		
 		
 		

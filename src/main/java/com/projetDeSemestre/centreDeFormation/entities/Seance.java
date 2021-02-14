@@ -32,8 +32,11 @@ public @Data class Seance {
 	@Column(name="DATE_FIN_SEANCE")
 	LocalDateTime dateFin;
 	
-	@Column(name="DESCRIPTION_SEANCE")
-	String description;
+	@Column(name="LIEN_SEANCE")
+	String lien;
+	
+	@Column(name="PASSWORD_REUNION_SEANCE")
+	String passwordReunion;
 	
 	@ManyToOne
 	@JoinColumn(name="FORMATION_SEANCE")
