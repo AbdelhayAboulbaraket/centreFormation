@@ -74,7 +74,7 @@ public @Data class Formation {
 		Intervenant intervenant;
 		
 		@Column(nullable = true, length = 256)
-	    private String thumbnail;
+	    private String image;
 		
 		@OneToOne
 		@JoinColumn(name="EVALUATION_FORMATION")

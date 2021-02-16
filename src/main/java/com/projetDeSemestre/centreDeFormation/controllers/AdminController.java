@@ -24,7 +24,7 @@ import com.projetDeSemestre.centreDeFormation.exceptions.AlreadyExistsException;
 import com.projetDeSemestre.centreDeFormation.services.AdminService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api")
 public class AdminController {
@@ -79,7 +79,7 @@ public class AdminController {
 				
 				String nomPhoto=admin.getUsername()+"."+fileName.split("[.]")[1];
 				String uploadDir = "src/main/resources/public/photosDeProfil/";
-				admin.setPhoto(uploadDir+nomPhoto);
+				admin.setImage("http://localhost:8081/photosDeProfil/"+nomPhoto);
 				service.updateAdmin(id, admin);
 
 		        FileUploadUtil.saveFile(uploadDir, nomPhoto, multipartFile);

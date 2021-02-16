@@ -26,7 +26,7 @@ import com.projetDeSemestre.centreDeFormation.entities.Formation;
 import com.projetDeSemestre.centreDeFormation.services.EtudiantService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api")
 public class EtudiantController {
 EtudiantService service;
@@ -94,9 +94,9 @@ EtudiantService service;
 			{	String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 				Etudiant p = service.getEtudiants(id).get(0);
 
-				String nomPhoto=p.getUsername()+"."+fileName.split("[.]")[1];
+				String nomPhoto=p.getId()+"."+fileName.split("[.]")[1];
 				String uploadDir = "src/main/resources/public/photosDeProfil/";
-				p.setPhoto(uploadDir+nomPhoto);
+				p.setImage("http://localhost:8081/photosDeProfil/"+nomPhoto);
 				service.updateEtudiant(id, p);
 				
 		        FileUploadUtil.saveFile(uploadDir, nomPhoto, multipartFile);

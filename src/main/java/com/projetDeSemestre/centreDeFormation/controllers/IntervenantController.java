@@ -27,7 +27,7 @@ import com.projetDeSemestre.centreDeFormation.services.IntervenantService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api")
 public class IntervenantController {
 IntervenantService service;
@@ -72,9 +72,9 @@ IntervenantService service;
 			public void addIntervenant(@PathVariable Long id,@RequestParam(name="image", required=false) MultipartFile multipartFile ) throws IOException
 			{	String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 				Intervenant inter=service.getIntervenants(id).get(0);
-				String nomPhoto=inter.getUsername()+"."+fileName.split("[.]")[1];
+				String nomPhoto=inter.getId()+"."+fileName.split("[.]")[1];
 				String uploadDir = "src/main/resources/public/photosDeProfil/";
-				inter.setPhoto(uploadDir+nomPhoto);
+				inter.setImage("http://localhost:8081/photosDeProfil/"+nomPhoto);
 				service.updateIntervenant(id, inter);
 				
 		        FileUploadUtil.saveFile(uploadDir, nomPhoto, multipartFile);

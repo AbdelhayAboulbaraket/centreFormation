@@ -30,7 +30,7 @@ import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api")
 public class SeanceController {
 	

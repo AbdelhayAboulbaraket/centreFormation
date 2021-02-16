@@ -31,7 +31,7 @@ import lombok.Data;
 })
 public @Data class Intervenant extends User {
 	@Column(nullable = true, length = 255)
-    private String photo;
+    private String image;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="intervenant")

@@ -45,6 +45,6 @@ public @Data class Etudiant extends User {
     List<Formation> formations;
 	
 	@Column(nullable = true, length = 255)
-    private String photo;
+    private String image;
 	
 }

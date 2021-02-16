@@ -26,6 +26,8 @@ public class Question {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Long id;
 	
+	String enonce;
+	
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="EVALUATION_QUESTION")

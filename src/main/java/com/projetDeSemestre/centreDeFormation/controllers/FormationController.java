@@ -41,7 +41,7 @@ import com.projetDeSemestre.centreDeFormation.services.EvaluationService;
 import com.projetDeSemestre.centreDeFormation.services.FormationService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api")
 public class FormationController {
 
@@ -112,6 +112,13 @@ ReponseRepository reponseRepository;
 				return etudiantsNonInscrits;
 			}
 			
+			@GetMapping("/formation/{id}/evaluation")
+			@ResponseStatus(HttpStatus.OK)
+			public Evaluation getEvaluation(@PathVariable Long id)
+			{
+				return service.getFormations(id).get(0).getEvaluation();
+			}
+			
 			
 			
 
@@ -147,9 +154,9 @@ ReponseRepository reponseRepository;
 			{	String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 
 				Formation p = service.getFormations(id).get(0);
-				String nomPhoto="thumbnail"+p.getTitre()+"."+fileName.split("[.]")[1];
+				String nomPhoto="thumbnail"+p.getId()+"."+fileName.split("[.]")[1];
 				String uploadDir = "src/main/resources/public/thumbnails/";
-				p.setThumbnail(uploadDir+nomPhoto);
+				p.setImage("http://localhost:8081/thumbnails/"+nomPhoto);
 				service.updateFormation(id, p);	
 		        FileUploadUtil.saveFile(uploadDir, nomPhoto, multipartFile);
 			}

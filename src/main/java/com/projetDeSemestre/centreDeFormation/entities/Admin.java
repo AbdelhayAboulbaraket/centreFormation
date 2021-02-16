@@ -23,5 +23,5 @@ import lombok.*;
 public @Data class Admin extends User{
 	
 	 @Column(nullable = true, length = 255)
-	    private String photo;
+	    private String image;
 }
