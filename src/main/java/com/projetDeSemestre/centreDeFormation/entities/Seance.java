@@ -26,14 +26,17 @@ public @Data class Seance {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Long id;
 	
+	@Column(name="TITRE_SEANCE")
+	String titre;
+	
 	@Column(name="DATE_DEBUT_SEANCE")
-	LocalDateTime dateDebut;
+	LocalDateTime creneau;
 	
 	@Column(name="DATE_FIN_SEANCE")
 	LocalDateTime dateFin;
 	
-	@Column(name="LIEN_SEANCE")
-	String lien;
+	@Column(name="PATH_SEANCE")
+	String path;
 	
 	@Column(name="PASSWORD_REUNION_SEANCE")
 	String passwordReunion;

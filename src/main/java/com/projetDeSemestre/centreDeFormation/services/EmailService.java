@@ -36,7 +36,7 @@ public class EmailService{
 		int i=1;
 		for(Seance seance:formation.getSeances())
 		{	
-			text+="Seance numéro "+i+" : du "+seance.getDateDebut()+" jusqu'à "+ seance.getDateFin()+".\n";
+			text+="Seance numéro "+i+" : du "+seance.getCreneau()+" jusqu'à "+ seance.getDateFin()+".\n";
 			i++;
 		}
 		text+="Cordialement";

@@ -55,6 +55,20 @@ public class SeanceController {
 				return service.getSeances(id);
 			}
 			
+			@GetMapping("/seance/{id}/supports")
+			@ResponseStatus(HttpStatus.OK)
+			public List<Support> getSupports(@PathVariable Long id)
+			{
+				return service.getSeances(id).get(0).getSupports();
+			}
+			
+			@GetMapping("/seance/{id}/commentaires")
+			@ResponseStatus(HttpStatus.OK)
+			public List<Commentaire> getCommentaires(@PathVariable Long id)
+			{
+				return service.getSeances(id).get(0).getCommentaires();
+			}
+			
 			
 
 			
@@ -76,12 +90,12 @@ public class SeanceController {
 			{	
 				String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 				Seance seance=service.getSeances(id).get(0);
-
+				
 				String uploadDir = "src/main/resources/public/supportDeCours/"+seance.getId()+"/";
 				
 				Support supp=new Support();
-				supp.setPath(uploadDir+fileName);
-				
+				supp.setPath("http://localhost:8081/supportDeCours/"+seance.getId()+"/"+seance.getSupports().size()+1);
+				supp.setSeance(seance);
 				repo.save(supp);
 				
 				FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);	
@@ -93,7 +107,7 @@ public class SeanceController {
 			{	
 				Seance seance=this.service.getSeances(id).get(0);
 				commentaire.setSeance(seance);
-				LocalDateTime currentUtilDate = LocalDateTime.now(); 
+				LocalDateTime currentUtilDate = LocalDateTime.now().plusHours(1); 
 				commentaire.setDate(currentUtilDate);
 				this.commentaireService.addCategorie(commentaire);
 			}

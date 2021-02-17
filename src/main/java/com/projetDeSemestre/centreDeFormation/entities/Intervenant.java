@@ -30,6 +30,7 @@ import lombok.Data;
     @AttributeOverride(name = "role", column = @Column(name = "ROLE_INTERVENANT"))
 })
 public @Data class Intervenant extends User {
+	
 	@Column(nullable = true, length = 255)
     private String image;
 	

@@ -77,7 +77,7 @@ public class AdminController {
 				//Path path = FileSystems.getDefault().getPath("").toAbsolutePath();
 				Admin admin=service.getAdmins(id).get(0);
 				
-				String nomPhoto=admin.getUsername()+"."+fileName.split("[.]")[1];
+				String nomPhoto=admin.getId()+"."+fileName.split("[.]")[1];
 				String uploadDir = "src/main/resources/public/photosDeProfil/";
 				admin.setImage("http://localhost:8081/photosDeProfil/"+nomPhoto);
 				service.updateAdmin(id, admin);

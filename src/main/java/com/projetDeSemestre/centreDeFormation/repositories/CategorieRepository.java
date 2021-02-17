@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.projetDeSemestre.centreDeFormation.entities.Categorie;
 
 public interface CategorieRepository extends JpaRepository<Categorie, Long>  {
-	Optional<Categorie> findByNom(String nom);
+	Optional<Categorie> findByDesignation(String nom);
 }

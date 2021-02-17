@@ -27,10 +27,9 @@ public @Data class Categorie {
 	Admin creationAdmin;
 	
 	@Column(name="NOM_CATEGORIE")
-	String nom;
+	String designation;
 	
-	@Column(name="DESCRIPTION_CATEGORIE")
-	String description;
+
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="categorie")

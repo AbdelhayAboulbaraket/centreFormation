@@ -20,7 +20,7 @@ import com.projetDeSemestre.centreDeFormation.entities.Categorie;
 import com.projetDeSemestre.centreDeFormation.entities.Formation;
 import com.projetDeSemestre.centreDeFormation.services.CategorieService;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(value = "/api")
 public class CategorieController {

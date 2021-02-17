@@ -16,17 +16,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.projetDeSemestre.centreDeFormation.entities.Admin;
 import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
 import com.projetDeSemestre.centreDeFormation.entities.Formation;
 import com.projetDeSemestre.centreDeFormation.services.EtudiantService;
+import com.projetDeSemestre.centreDeFormation.services.FormationService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api")
 public class EtudiantController {
 EtudiantService service;
@@ -36,6 +36,8 @@ EtudiantService service;
 		
 		this.service=service;
 	}
+	@Autowired
+	FormationService formationService;
 	
 	//GET
 			@GetMapping("/etudiants")
@@ -73,9 +75,7 @@ EtudiantService service;
 			public void addEtudiant(@RequestBody Etudiant etudiant) throws IOException
 			{	
 					
-
 				service.addEtudiant(etudiant);
-
 			}
 			@PostMapping("/etudiant/inscriptionFormation")
 			@ResponseStatus(HttpStatus.CREATED)
@@ -83,6 +83,23 @@ EtudiantService service;
 			{	
 				
 				service.addFormation(formation);
+
+			}
+			
+			@PostMapping("/etudiant/estInscrit")
+			@ResponseStatus(HttpStatus.CREATED)
+			@ResponseBody
+			public boolean estInscrit(@RequestBody Formation formation) throws IOException
+			{	
+				String username=SecurityContextHolder.getContext().getAuthentication().getName();
+				Etudiant etud=this.service.getByUsername(username);
+				Formation laFormation=this.formationService.getFormations(formation.getId()).get(0);
+				for(Formation forma:etud.getFormations())
+				{	
+					System.out.println(forma.getId()+" vs "+laFormation.getId());
+					if (forma.getId()==laFormation.getId()) return true;
+				}
+				return false;
 
 			}
 			

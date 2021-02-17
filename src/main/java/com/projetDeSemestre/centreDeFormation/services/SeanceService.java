@@ -54,16 +54,24 @@ public class SeanceService {
 		//Admin admin = adminService.getByUsername(username);
 //		System.out.println(seance);
 		Formation formation=formationService.getFormations(seance.getFormation().getId()).get(0);
-		
+		seance.setCreneau(seance.getCreneau().plusHours(1));
+		seance.setDateFin(seance.getCreneau().plusMinutes(105));
+		System.out.println(seance.getCreneau()+" "+seance.getDateFin());
 		Intervenant intervenant=intervenantService.getIntervenants(formation.getIntervenant().getId()).get(0);
-		for(Formation form: intervenant.getFormations())
+		if(intervenant.getFormations().size()!=0)
 		{
+		for(Formation form: intervenant.getFormations())
+		{	
+			if(form.getSeances().size()!=0)
+			{
 			for(Seance scea:form.getSeances())
 			{
-				if((seance.getDateDebut().isBefore(scea.getDateDebut()) && seance.getDateFin().isBefore(scea.getDateDebut()) )
-						|| seance.getDateDebut().isAfter(scea.getDateFin()) && seance.getDateFin().isAfter(scea.getDateFin())) continue;
+				if((seance.getCreneau().isBefore(scea.getCreneau()) && seance.getDateFin().isBefore(scea.getCreneau()) )
+						|| seance.getCreneau().isAfter(scea.getDateFin()) && seance.getDateFin().isAfter(scea.getDateFin())) continue;
 				else throw new AlreadyExistsException("Impossible");
 			}
+			}
+		}
 		}
 		
 		rep.save(seance);		
@@ -80,6 +88,7 @@ public class SeanceService {
 //		if(seance.getPrix()!=null) updated.setPrix(seance.getPrix());
 //		if(seance.getCategorie()!=null) updated.setCategorie(seance.getCategorie());
 //		rep.save(updated);
+		rep.save(seance);
 	}
 
 	public void removeSeance(Long id)

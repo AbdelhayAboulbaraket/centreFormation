@@ -150,7 +150,7 @@ ReponseRepository reponseRepository;
 			
 			@PostMapping("/formationThumbnail/{id}")
 			@ResponseStatus(HttpStatus.CREATED)
-			public void addFormationThumbnail(@PathVariable Long id,@RequestParam("thumbnail") MultipartFile multipartFile ) throws IOException
+			public void addFormationThumbnail(@PathVariable Long id,@RequestParam("image") MultipartFile multipartFile ) throws IOException
 			{	String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 
 				Formation p = service.getFormations(id).get(0);

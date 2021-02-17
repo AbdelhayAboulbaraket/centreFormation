@@ -47,7 +47,7 @@ public class IntervenantService {
 	
 	
 	
-	public void addIntervenant(Intervenant intervenant)
+	public Intervenant addIntervenant(Intervenant intervenant)
 	{
 		
 		if(rep.findByUsername(intervenant.getUsername()).isPresent()) {
@@ -63,8 +63,9 @@ public class IntervenantService {
 		intervenant.setRole("Intervenant");
 				
 		
-		rep.save(intervenant);
-		System.out.println("Intervenant ajouté.");
+		Intervenant inter=rep.save(intervenant);
+		return inter;
+		//System.out.println("Intervenant ajouté.");
 	
 //		Intervenant user = getByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		

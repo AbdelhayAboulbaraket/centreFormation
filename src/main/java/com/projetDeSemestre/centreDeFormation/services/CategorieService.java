@@ -46,7 +46,7 @@ public class CategorieService {
 	{	
 		String username=SecurityContextHolder.getContext().getAuthentication().getName();
 		Admin admin = adminService.getByUsername(username);
-		if(rep.findByNom(categorie.getNom()).isPresent()) {
+		if(rep.findByDesignation(categorie.getDesignation()).isPresent()) {
 			throw new AlreadyExistsException("Veuillez choisir un autre nom de catégorie");
 		}
 		categorie.setCreationAdmin(admin);
@@ -56,16 +56,9 @@ public class CategorieService {
 	
 	public void updateCategorie(Long id,Categorie categorie)
 	{
-		Categorie updated = rep.findById(id).orElseThrow(() -> new NotFoundException("Aucune catégorie avec l'id "+id+" trouvé"));
+
 		
-		//verifier l'unicité du nouveau nom
-		if(rep.findByNom(categorie.getNom()).isPresent())
-			throw new AlreadyExistsException("Veuillez choisir un autre Username");
-		
-		if(categorie.getNom()!=null && !categorie.getNom().isEmpty()) updated.setNom(categorie.getNom());
-		if(categorie.getDescription()!=null && !categorie.getDescription().isEmpty()) updated.setDescription(categorie.getDescription());
-		
-		rep.save(updated);
+		rep.save(categorie);
 	}
 
 	public void removeCategorie(Long id)
