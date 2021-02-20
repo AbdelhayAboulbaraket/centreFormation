@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -19,9 +21,13 @@ public class Support {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Long id;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="SEANCE_SUPPORT")
 	Seance seance;
+	
+	@Column(name="NOM_SUPPORT")
+	String nom;
 	
 	@Column(name="SUPPORT_PATH",nullable = true, length = 255)
     private String path;

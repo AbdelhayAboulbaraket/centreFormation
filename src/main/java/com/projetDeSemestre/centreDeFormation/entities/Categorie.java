@@ -21,10 +21,7 @@ public @Data class Categorie {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Long id;
-	
-	@ManyToOne
-	@JoinColumn(name="CREATION_ADMIN_CATEGORIE")
-	Admin creationAdmin;
+
 	
 	@Column(name="NOM_CATEGORIE")
 	String designation;

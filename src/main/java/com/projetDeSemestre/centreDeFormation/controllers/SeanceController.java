@@ -25,6 +25,7 @@ import com.projetDeSemestre.centreDeFormation.entities.Seance;
 import com.projetDeSemestre.centreDeFormation.entities.Support;
 import com.projetDeSemestre.centreDeFormation.repositories.SupportRepository;
 import com.projetDeSemestre.centreDeFormation.services.CommentaireService;
+import com.projetDeSemestre.centreDeFormation.services.EmailService;
 import com.projetDeSemestre.centreDeFormation.services.SeanceService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
 
@@ -40,6 +41,12 @@ public class SeanceController {
 	
 	@Autowired
 	CommentaireService commentaireService;
+	
+	@Autowired
+	SupportRepository suppRep;
+	
+	@Autowired
+	EmailService emailService;
 	
 	@Autowired
 	public SeanceController(SeanceService service) {
@@ -94,11 +101,15 @@ public class SeanceController {
 				String uploadDir = "src/main/resources/public/supportDeCours/"+seance.getId()+"/";
 				
 				Support supp=new Support();
-				supp.setPath("http://localhost:8081/supportDeCours/"+seance.getId()+"/"+seance.getSupports().size()+1);
+				supp.setNom(fileName);
+				supp.setPath("http://localhost:8081/supportDeCours/"+seance.getId()+"/"+(seance.getSupports().size()+1)+"."+fileName.split("[.]")[1]);
+				fileName=""+(seance.getSupports().size()+1)+"."+fileName.split("[.]")[1];
 				supp.setSeance(seance);
 				repo.save(supp);
-				
 				FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);	
+				//this.emailService.sendAfterFileAdd(supp.getPath(), seance.getFormation());
+				
+				
 			}
 			
 			@PostMapping("/seance/{id}/commentaire")
@@ -107,7 +118,7 @@ public class SeanceController {
 			{	
 				Seance seance=this.service.getSeances(id).get(0);
 				commentaire.setSeance(seance);
-				LocalDateTime currentUtilDate = LocalDateTime.now().plusHours(1); 
+				LocalDateTime currentUtilDate = LocalDateTime.now(); 
 				commentaire.setDate(currentUtilDate);
 				this.commentaireService.addCategorie(commentaire);
 			}
@@ -118,8 +129,9 @@ public class SeanceController {
 			
 			@PutMapping("/seance/{id}")
 			@ResponseStatus(HttpStatus.OK)
-			public void updateSeance(@PathVariable Long id , @RequestBody(required=false) Seance seance)
+			public void updateSeance(@PathVariable Long id , @RequestBody Seance seance)
 			{	
+				
 				service.updateSeance(id,seance);
 			}
 			
@@ -134,5 +146,12 @@ public class SeanceController {
 			public void deleteSeance(@PathVariable Long id)
 			{
 				service.removeSeance(id);
+			}
+			
+			@DeleteMapping("/support/{id}")
+			@ResponseStatus(HttpStatus.OK)
+			public void deleteSupprt(@PathVariable Long id)
+			{
+				this.suppRep.deleteById(id);
 			}
 }

@@ -1,0 +1,16 @@
+1) db.users.find({movies:{$elemMatch:{movieid:1196}}}); 
+
+2)db.users.find({$and:[{movies:{$elemMatch:{movieid:1196}}},{movies:{$elemMatch:{movieid:1210}}},{movies:{$elemMatch:{movieid:260}}}]}).count()
+
+2)  db.users.find( { movies: { $all: [ { "$elemMatch" : { movieid:1196 } }, { "$elemMatch" : { movieid :260 } }, { "$elemMatch" : { movieid :1210 } } ] } } ).count()   
+
+3)db.users.find({movies:{$size:48}}).count();
+
+4) db.users.find().forEach(function(doc){var size1=doc.movies.length;db.users.updateOne({_id:doc._id},{$set:{size:size1}});});
+
+5) db.users.find({size:{$gte:90}}).count()
+
+
+
+Ecriture : 
+1) db.users.updateOne({name:"Sandie Alan"},{$push:{movies:{movieid:14,rating:4,timestamp:Math.round(new Date().getTime()/1000)}},$inc:{size:1}});

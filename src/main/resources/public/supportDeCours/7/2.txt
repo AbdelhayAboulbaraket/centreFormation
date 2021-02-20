@@ -1,0 +1,5 @@
+mongod --replSet rs0 --port 27018 --dbpath /data/rs1
+mongod --replSet rs0 --port 27019 --dbpath c:/data/rs2
+mongod --replSet rs0 --port 27020 –dbpath c:/data/rs3
+
+mongod -replSet rs0 -dbpath /data/arb -port 30000

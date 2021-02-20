@@ -28,6 +28,9 @@ public class SeanceService {
 	@Autowired
 	IntervenantService intervenantService;
 	
+	@Autowired
+	EmailService emailService;
+	
 	
 
 	
@@ -80,15 +83,10 @@ public class SeanceService {
 	
 	public void updateSeance(Long id,Seance seance)
 	{
-//		Seance updated = rep.findById(id).orElseThrow(() -> new NotFoundException("Aucune seance avec l'id "+id+" trouvé"));
-//		
-//		
-//		if(seance.getTitre()!=null && !seance.getTitre().isEmpty()) updated.setTitre(seance.getTitre());
-//		if(seance.getDescription()!=null && !seance.getDescription().isEmpty()) updated.setDescription(seance.getDescription());
-//		if(seance.getPrix()!=null) updated.setPrix(seance.getPrix());
-//		if(seance.getCategorie()!=null) updated.setCategorie(seance.getCategorie());
-//		rep.save(updated);
-		rep.save(seance);
+		Seance maSeance=this.getSeances(seance.getId()).get(0);
+		maSeance.setPath(seance.getPath());
+		rep.save(maSeance);
+		//this.emailService.sendAfterZoomGenerated(maSeance, maSeance.getFormation());
 	}
 
 	public void removeSeance(Long id)

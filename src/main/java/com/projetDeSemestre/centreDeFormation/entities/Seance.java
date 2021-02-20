@@ -45,7 +45,7 @@ public @Data class Seance {
 	@JoinColumn(name="FORMATION_SEANCE")
 	Formation formation;
 	
-	
+	@JsonIgnore
 	@OneToMany(mappedBy="seance")
 	@Column(name="SUPPORTS_SEANCE")
 	List<Support> supports; 

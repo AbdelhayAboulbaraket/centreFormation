@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public @Data abstract class User {
+public @Data  class User {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

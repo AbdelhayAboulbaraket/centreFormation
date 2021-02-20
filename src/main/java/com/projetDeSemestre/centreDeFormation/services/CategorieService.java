@@ -49,7 +49,6 @@ public class CategorieService {
 		if(rep.findByDesignation(categorie.getDesignation()).isPresent()) {
 			throw new AlreadyExistsException("Veuillez choisir un autre nom de catégorie");
 		}
-		categorie.setCreationAdmin(admin);
 		rep.save(categorie);		
 	}
 	

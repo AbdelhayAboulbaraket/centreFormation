@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,13 +15,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.projetDeSemestre.centreDeFormation.entities.BooleanResponse;
 import com.projetDeSemestre.centreDeFormation.entities.Etudiant;
 import com.projetDeSemestre.centreDeFormation.entities.Formation;
+import com.projetDeSemestre.centreDeFormation.entities.PassageEvaluation;
 import com.projetDeSemestre.centreDeFormation.services.EtudiantService;
 import com.projetDeSemestre.centreDeFormation.services.FormationService;
 import com.projetDeSemestre.centreDeFormation.util.FileUploadUtil;
@@ -47,12 +47,13 @@ EtudiantService service;
 				return service.getEtudiants(id);
 			}
 			
-			@GetMapping("/etudiant/{id}/formations")
+			@GetMapping("/etudiant/formations")
 			@ResponseStatus(HttpStatus.OK)
-			public List<Formation> getFormations(@PathVariable Long id)
-			{
-				List<Formation> forms=service.getEtudiants(id).get(0).getFormations();
-				return forms;
+			public List<Formation> getFormations()
+			{	String username=SecurityContextHolder.getContext().getAuthentication().getName();
+			Etudiant etud=this.service.getByUsername(username);
+			
+				return etud.getFormations();
 			}
 			
 			
@@ -77,6 +78,15 @@ EtudiantService service;
 					
 				service.addEtudiant(etudiant);
 			}
+			
+			@PostMapping("/inscriptionEtudiant")
+			@ResponseStatus(HttpStatus.CREATED)
+			public Etudiant insriptionEtudiant(@RequestBody Etudiant etudiant) throws IOException
+			{	
+					
+				return service.addEtudiant(etudiant);
+			}
+			
 			@PostMapping("/etudiant/inscriptionFormation")
 			@ResponseStatus(HttpStatus.CREATED)
 			public void addFormation(@RequestBody Formation formation) throws IOException
@@ -86,28 +96,56 @@ EtudiantService service;
 
 			}
 			
+			@GetMapping("/dejaPasse/{id}")
+			@ResponseStatus(HttpStatus.OK)
+			public BooleanResponse dejaPasse(@PathVariable Long id)
+			{
+				BooleanResponse b=new BooleanResponse();
+				String username=SecurityContextHolder.getContext().getAuthentication().getName();
+				Etudiant etud=this.service.getByUsername(username);
+				
+				if(this.formationService.getFormations(id).get(0).getEvaluation()==null) {
+					b.setResponse(false);
+					return b;
+				}
+				List<PassageEvaluation> passages=this.formationService.getFormations(id).get(0).getEvaluation().getPassages();
+				
+				for(PassageEvaluation passage:passages)
+				{
+					if(passage.getEtudiant().getId()==etud.getId()) {
+						b.setResponse(true);
+						return b;
+					}
+				}
+				b.setResponse(false);
+				return b;
+			}
+			
 			@PostMapping("/etudiant/estInscrit")
 			@ResponseStatus(HttpStatus.CREATED)
-			@ResponseBody
-			public boolean estInscrit(@RequestBody Formation formation) throws IOException
+			public BooleanResponse estInscrit(@RequestBody Formation formation) throws IOException
 			{	
 				String username=SecurityContextHolder.getContext().getAuthentication().getName();
 				Etudiant etud=this.service.getByUsername(username);
 				Formation laFormation=this.formationService.getFormations(formation.getId()).get(0);
+				BooleanResponse b=new BooleanResponse();
 				for(Formation forma:etud.getFormations())
 				{	
 					System.out.println(forma.getId()+" vs "+laFormation.getId());
-					if (forma.getId()==laFormation.getId()) return true;
+					if (forma.getId()==laFormation.getId()) {
+						b.setResponse(true);
+						return b;
+					}
 				}
-				return false;
-
+				b.setResponse(false);
+				return b;
 			}
 			
 			
 			@PostMapping("/etudiantPicture/{id}")
 			@ResponseStatus(HttpStatus.CREATED)
 			//requestParams@RequestBody Etudiant etudiant,@RequestBody MultipartFile multipartFile
-			public void addEtudiant(@PathVariable Long id,MultipartFile multipartFile ) throws IOException
+			public void addEtudiantPicture(@PathVariable Long id,@RequestParam("image") MultipartFile multipartFile ) throws IOException
 			{	String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 				Etudiant p = service.getEtudiants(id).get(0);
 

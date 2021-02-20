@@ -23,7 +23,8 @@ public class EtudiantService {
 	@Autowired
 	FormationService formationService;
 	
-	
+	@Autowired
+	EmailService emailService;
 
 	
 	
@@ -52,7 +53,7 @@ public class EtudiantService {
 	
 	
 	
-	public void addEtudiant(Etudiant etudiant)
+	public Etudiant addEtudiant(Etudiant etudiant)
 	{
 		
 		if(rep.findByUsername(etudiant.getUsername()).isPresent()) {
@@ -68,8 +69,8 @@ public class EtudiantService {
 		etudiant.setRole("Etudiant");
 				
 		
-		rep.save(etudiant);
-		System.out.println("Etudiant ajouté.");
+		return rep.save(etudiant);
+
 	
 //		Etudiant user = getByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 		
@@ -80,7 +81,9 @@ public class EtudiantService {
 	{
 		String username=SecurityContextHolder.getContext().getAuthentication().getName();
 		Etudiant etud = rep.findByUsername(username).orElseThrow(() -> new NotFoundException("Aucun étudiant avec ce username n'est trouvé"));
+		
 		Formation maFormation=formationService.getFormations(formation.getId()).get(0);
+		//this.emailService.sendInscriptionInformations(etud, formation);
 		etud.getFormations().add(maFormation);
 		rep.save(etud);	
 	}
